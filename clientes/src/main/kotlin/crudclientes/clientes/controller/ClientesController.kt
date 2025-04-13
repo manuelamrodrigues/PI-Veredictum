@@ -16,8 +16,12 @@ import java.time.LocalDateTime
 class ClientesController(val repositorio: ClientesRepository) {
 
     @GetMapping
-    fun buscar(): ResponseEntity<List<Clientes>> {
-        val clientes = repositorio.findAll(Sort.by(Sort.Order.asc("nome"))) //COLOCAR FIND ALL
+    fun buscar(@RequestParam(required = false) nome: String?): ResponseEntity<List<Clientes>> {
+        val clientes = if (nome.isNullOrBlank()) {
+            repositorio.findAll(Sort.by(Sort.Order.asc("nome")))
+        } else {
+            repositorio.findByNomeContainingIgnoreCaseOrderByNomeAsc(nome)
+        }
 
         return if (clientes.isEmpty()) {
             ResponseEntity.status(204).build()
@@ -33,192 +37,55 @@ class ClientesController(val repositorio: ClientesRepository) {
     }
 
     @PostMapping
-    fun cadastrar(@RequestBody @Valid novoCliente: Clientes): ResponseEntity<Clientes>{
+    fun cadastrar(@RequestBody @Valid novoCliente: Clientes): ResponseEntity<Clientes> {
         val cliente = repositorio.save(novoCliente)
         return ResponseEntity.status(201).body(novoCliente)
     }
 
     @PutMapping("/{id}")
-    fun atualizar(@PathVariable id: Int, @RequestBody clientesAtualizados: Clientes): ResponseEntity<Clientes>{
-        if(repositorio.existsById(id)){
+    fun atualizar(@PathVariable id: Int, @RequestBody clientesAtualizados: Clientes): ResponseEntity<Clientes> {
+        if (repositorio.existsById(id)) {
             clientesAtualizados.id
             val clientes = repositorio.save(clientesAtualizados)
             return ResponseEntity.status(200).body(clientesAtualizados)
-        }else{
+        } else {
             return ResponseEntity.status(404).build()
         }
     }
 
+    @PatchMapping("/{id}")
+    fun atualizarParcial(
+        @PathVariable id: Int,
+        @RequestBody atualizacoes: Map<String, Any>
+    ): ResponseEntity<Clientes> {
+        val clienteOptional = repositorio.findById(id)
+        if (clienteOptional.isEmpty) return ResponseEntity.status(404).build()
 
+        val cliente = clienteOptional.get()
 
-    @PatchMapping("/clientes/{id}")
-    fun atualizarNome(@PathVariable id: Int, @RequestParam nome: String): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
+        atualizacoes.forEach { (chave, valor) ->
+            when (chave) {
+                "nome" -> cliente.nome = valor.toString()
+                "email" -> cliente.email = valor.toString()
+                "rg" -> cliente.rg = valor.toString()
+                "cpf" -> cliente.cpf = valor.toString()
+                "cnpj" -> cliente.cnpj = valor.toString()
+                "dataNascimento" -> cliente.dataNascimento = LocalDateTime.parse(valor.toString())
+                "dataInicio" -> cliente.dataInicio = LocalDateTime.parse(valor.toString())
+                "endereco" -> cliente.endereco = valor.toString()
+                "cep" -> cliente.cep = valor.toString()
+                "descricao" -> cliente.descricao = valor.toString()
+                "inscricaoEstadual" -> cliente.inscricaoEstadual = valor.toString()
+                "proBono" -> cliente.isProBono = valor.toString().toBoolean()
+                "ativo" -> cliente.isAtivo = valor.toString().toBoolean()
+                "juridico" -> cliente.isJuridico = valor.toString().toBoolean()
+                else -> {
+                }
+            }
         }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.nome = nome
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
 
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarEmail(@PathVariable id: Int, @RequestParam email: String): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.email= email
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarRg(@PathVariable id: Int, @RequestParam rg: String): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.rg= rg
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarCpf(@PathVariable id: Int, @RequestParam cpf: String): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.cpf= cpf
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarCnpj(@PathVariable id: Int, @RequestParam cnpj: String): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.cnpj= cnpj
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarDataNascimento(@PathVariable id: Int, @RequestParam dataNascimento: LocalDateTime): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.dataNascimento= dataNascimento
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarDataInicio(@PathVariable id: Int, @RequestParam dataInicio: LocalDateTime): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.dataInicio= dataInicio
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarEndereco(@PathVariable id: Int, @RequestParam endereco: String): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.endereco= endereco
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarCep(@PathVariable id: Int, @RequestParam cep: String): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.cep= cep
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarDescricao(@PathVariable id: Int, @RequestParam descricao: String): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.descricao= descricao
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarInscricaoEstadual(@PathVariable id: Int, @RequestParam inscricaoEstadual: String): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.inscricaoEstadual= inscricaoEstadual
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarProBono(@PathVariable id: Int, @RequestParam proBono: Boolean): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.isProBono= proBono
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarAtivo(@PathVariable id: Int, @RequestParam ativo: Boolean): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.isAtivo= ativo
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
-    }
-
-    @PatchMapping("/clientes/{id}")
-    fun atualizarJridico(@PathVariable id: Int, @RequestParam juridico: Boolean): ResponseEntity<Clientes> {
-        val cliente = repositorio.findById(id)
-        if (cliente.isEmpty) {
-            return ResponseEntity.status(404).build()
-        }
-        val clienteAtualizado = cliente.get()
-        clienteAtualizado.isJuridico= juridico
-        repositorio.save(clienteAtualizado)
-        return ResponseEntity.status(200).body(clienteAtualizado)
+        repositorio.save(cliente)
+        return ResponseEntity.status(200).body(cliente)
     }
 
     @DeleteMapping("/{id}")
@@ -230,13 +97,5 @@ class ClientesController(val repositorio: ClientesRepository) {
         return ResponseEntity.status(404).build()
     }
 
-
-
-
-
-
-
-
-
-
 }
+

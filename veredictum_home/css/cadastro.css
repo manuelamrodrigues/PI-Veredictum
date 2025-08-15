@@ -1,0 +1,145 @@
+body {
+  height: 100vh;
+  background: #222;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.voltar-icon img{
+  width: 30px;
+  margin: 20px;
+  cursor: pointer;
+}
+
+.cadastro-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+  box-sizing: border-box;
+  background-image: url('../imgs/teste.jpg');
+  /* background-image: url('./teste.jpg'); */
+  background-size: cover;
+  background-position: center;
+}
+
+.image-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 30px;
+}
+
+
+.login-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 18px;
+  width: 90%;
+  height: 40px;
+  background: #F4A100;
+  color: #fff;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.login-btn:hover {
+    background: #9b9494;
+    color: #fff;
+}
+
+.cadastro-info {
+  width: 50%;
+  height: 100%;
+  box-sizing: border-box;
+  background-color: #000
+}
+
+.logo-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.logo-row img {
+  width: 20%;
+  height: 20%;
+  margin-right: -20px;
+
+
+}
+
+.logo-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+    margin-top: -20px;
+}
+
+.subtitle-logo {
+  color: #fff;
+  font-size: 15px;
+  margin-top: 0;
+}
+
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  margin-top: 40px;
+  margin-left: 80px;
+}
+
+
+.login-form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+
+
+.login-form input {
+  width: 80%;
+  height: 30px;
+  border-radius: 8px;
+  padding-left: 10px;
+
+}
+
+.cadastro-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 18px;
+  background: #F4A100;
+  color: #fff;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  width: 80%;
+  height: 30px;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cadastro-btn:hover {
+    background: #9b9494;
+    color: #fff;
+}

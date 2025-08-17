@@ -133,3 +133,36 @@ h1 {
     border-radius: 8px;
     object-fit: cover;
 }
+
+
+@media (max-width: 1024px) {
+    .home-card {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .home-info, .home-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .home-boas-vindas {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .button-row {
+        margin-left: 20px;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .logo-row img {
+        width: 30%;
+        height: auto;
+        margin-right: -20px;
+    }
+}
+
+
+
